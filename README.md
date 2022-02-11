@@ -1,29 +1,12 @@
-# README #
+# Bitbucket oidc module
 
-This README would normally document whatever steps are necessary to get your application up and running.
+Terraform module for create AWS IAM Role to support Bitbucket OIDC.
 
-### What is this repository for? ###
+### Contribution guidelines
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+1. Directly modify the code
+2. Push to feature branch
+3. Verify your changes with feature branch
+4. After you verified the changes, merge to dev.
+5. Once you decide to release the changes, merge dev to master and give it a tag!
+6. Done, everyone can use your changes with new tag.
