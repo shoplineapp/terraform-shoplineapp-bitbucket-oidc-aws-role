@@ -1,18 +1,4 @@
-locals {
-  role_policy_attachments = flatten([
-    for role_key, role in var.roles : [
-      for policy_key, policy in role.policies : {
-        role_key   = role_key
-        policy_key = policy_key
-        policy_arn = policy.arn
-      }
-    ]
-  ])
-}
-
 data "aws_iam_policy_document" "bitbucket_assume_role_policy" {
-  for_each = var.roles
-
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
 
@@ -24,25 +10,23 @@ data "aws_iam_policy_document" "bitbucket_assume_role_policy" {
     condition {
       test     = "StringLike"
       variable = "api.bitbucket.org/2.0/workspaces/${var.bitbucket_workspace_name}/pipelines-config/identity/oidc:sub"
-      values   = each.value.allowed_subjects
+      values   = var.allowed_subjects
     }
   }
 }
 
 resource "aws_iam_role" "this" {
-  for_each           = data.aws_iam_policy_document.bitbucket_assume_role_policy
+  name               = var.role_name
+  assume_role_policy = data.aws_iam_policy_document.bitbucket_assume_role_policy.json
 
-  name               = var.roles[each.key].name
-  assume_role_policy = each.value.json
-
-  tags = var.roles[each.key].tags
+  tags = {
+    Name = var.role_name
+  }
 }
 
-resource "aws_iam_role_policy_attachment" "api_service_process_order_event" {
-  for_each = {
-    for attachment in local.role_policy_attachments : "${attachment.role_key}:${attachment.policy_key}" => attachment
-  }
+resource "aws_iam_role_policy_attachment" "this" {
+  count = length(var.policy_arns)
 
-  role       = aws_iam_role.this[each.value.role_key].name
-  policy_arn = each.value.policy_arn
+  role       = aws_iam_role.this.name
+  policy_arn = var.policy_arns[count.index]
 }
