@@ -23,3 +23,21 @@ variable "policy_arns" {
   default     = []
   description = "The arns of policy you want to attach to the role."
 }
+
+variable "ecr_repo_name" {
+  type = string
+  default = ""
+  description = "The (private ecr) repo name where docker image push to"
+}
+
+variable "secretmanager_arns" {
+  type = list(string)
+  default = []
+  description = "To get secret manager last version uuid"
+}
+
+variable "eks_cluster_name" {
+  type = string
+  default = ""
+  description = "access to the eks cluster"
+}
