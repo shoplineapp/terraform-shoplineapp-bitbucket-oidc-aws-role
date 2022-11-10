@@ -6,12 +6,12 @@ data "aws_eks_cluster" "eks" {
 }
 
 data "aws_ecr_repository" "ecr" {
-  count = var.ecr_repo_name != "" ? 1 : 0
-  name  = var.ecr_repo_name
+  for_each = toset(var.ecr_repo_names)
+  name     = each.key
 }
 
 data "aws_iam_policy_document" "ecr_policy" {
-  count = var.ecr_repo_name != "" ? 1 : 0
+  count = length(var.ecr_repo_names) > 0 ? 1 : 0
   statement {
     effect = "Allow"
     actions = [
@@ -33,7 +33,7 @@ data "aws_iam_policy_document" "ecr_policy" {
       "ecr:ReplicateImage"
     ]
     resources = [
-      data.aws_ecr_repository.ecr[count.index].arn
+      for ecr in data.aws_ecr_repository.ecr : ecr.arn
     ]
   }
 
@@ -92,7 +92,7 @@ resource "aws_iam_role_policy" "eks_policy" {
 }
 
 resource "aws_iam_role_policy" "ecr_policy" {
-  count  = var.ecr_repo_name != "" ? 1 : 0
+  count  = length(var.ecr_repo_names) > 0 ? 1 : 0
   name   = "${var.role_name}-ecr-policy"
   role   = aws_iam_role.this.name
   policy = data.aws_iam_policy_document.ecr_policy[count.index].json
