@@ -24,9 +24,9 @@ variable "policy_arns" {
   description = "The arns of policy you want to attach to the role."
 }
 
-variable "ecr_repo_name" {
-  type = string
-  default = ""
+variable "ecr_repo_names" {
+  type = list(string)
+  default = []
   description = "The (private ecr) repo name where docker image push to"
 }
 
