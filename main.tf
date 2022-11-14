@@ -9,7 +9,7 @@ data "aws_iam_policy_document" "bitbucket_assume_role_policy" {
 
     condition {
       test     = "StringLike"
-      variable = "api.bitbucket.org/2.0/workspaces/${var.bitbucket_workspace_name}/pipelines-config/identity/oidc:sub"
+      variable = "api.bitbucket.org/2.0/workspaces/${var.bitbucket_workspace_name}/pipelines-config/identity/oidc:aud"
       values   = var.allowed_subjects
     }
   }
