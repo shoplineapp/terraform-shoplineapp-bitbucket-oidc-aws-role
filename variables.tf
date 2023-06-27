@@ -24,20 +24,43 @@ variable "policy_arns" {
   description = "The arns of policy you want to attach to the role."
 }
 
+variable "ecr_repo_name" {
+  type        = string
+  default     = ""
+  description = "The (private ecr) repo name where docker image push to"
+}
+
 variable "ecr_repo_names" {
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
   description = "The (private ecr) repo name where docker image push to"
 }
 
 variable "secretmanager_arns" {
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
   description = "To get secret manager last version uuid"
 }
 
 variable "eks_cluster_name" {
-  type = string
-  default = ""
+  type        = string
+  default     = ""
   description = "access to the eks cluster"
+}
+
+variable "eks_cluster_names" {
+  type        = list(string)
+  default     = []
+  description = "access to the eks cluster"
+}
+
+locals {
+  ecr_list = ((contains(var.ecr_repo_names, var.ecr_repo_name) == false && var.ecr_repo_name != "") ?
+    concat(var.ecr_repo_names, [var.ecr_repo_name]) :
+    var.ecr_repo_names
+  )
+  eks_list = ((contains(var.eks_cluster_names, var.eks_cluster_name) == false && var.eks_cluster_name != "") ?
+    concat(var.eks_cluster_names, [var.eks_cluster_name]) :
+    var.eks_cluster_names
+  )
 }

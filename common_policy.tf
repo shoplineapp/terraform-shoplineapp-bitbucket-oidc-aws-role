@@ -1,17 +1,17 @@
 
 
 data "aws_eks_cluster" "eks" {
-  count = var.eks_cluster_name != "" ? 1 : 0
-  name  = var.eks_cluster_name
+  for_each = toset(local.eks_list)
+  name     = each.key
 }
 
 data "aws_ecr_repository" "ecr" {
-  for_each = toset(var.ecr_repo_names)
+  for_each = toset(local.ecr_list)
   name     = each.key
 }
 
 data "aws_iam_policy_document" "ecr_policy" {
-  count = length(var.ecr_repo_names) > 0 ? 1 : 0
+  count = length(local.ecr_list) > 0 ? 1 : 0
   statement {
     effect = "Allow"
     actions = [
@@ -49,7 +49,7 @@ data "aws_iam_policy_document" "ecr_policy" {
 }
 
 data "aws_iam_policy_document" "eks_policy" {
-  count = var.eks_cluster_name != "" ? 1 : 0
+  count = length(local.eks_list) > 0 ? 1 : 0
   statement {
     effect = "Allow"
     actions = [
@@ -58,7 +58,7 @@ data "aws_iam_policy_document" "eks_policy" {
       "eks:DescribeCluster"
     ]
     resources = [
-      data.aws_eks_cluster.eks[count.index].arn
+      for eks in data.aws_eks_cluster.eks : eks.arn
     ]
   }
 }
@@ -85,14 +85,14 @@ resource "aws_iam_role_policy" "secret_policy" {
 }
 
 resource "aws_iam_role_policy" "eks_policy" {
-  count  = var.eks_cluster_name != "" ? 1 : 0
+  count  = length(local.eks_list) > 0 ? 1 : 0
   name   = "${var.role_name}-eks-policy"
   role   = aws_iam_role.this.name
   policy = data.aws_iam_policy_document.eks_policy[count.index].json
 }
 
 resource "aws_iam_role_policy" "ecr_policy" {
-  count  = length(var.ecr_repo_names) > 0 ? 1 : 0
+  count  = length(local.ecr_list) > 0 ? 1 : 0
   name   = "${var.role_name}-ecr-policy"
   role   = aws_iam_role.this.name
   policy = data.aws_iam_policy_document.ecr_policy[count.index].json
