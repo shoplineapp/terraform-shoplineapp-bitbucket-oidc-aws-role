@@ -54,6 +54,12 @@ variable "eks_cluster_names" {
   description = "access to the eks cluster"
 }
 
+variable "eks_cluster_namespaces" {
+  type        = list(string)
+  default     = []
+  description = "The eks cluster namespace where you will deploy to"
+}
+
 locals {
   ecr_list = ((contains(var.ecr_repo_names, var.ecr_repo_name) == false && var.ecr_repo_name != "") ?
     concat(var.ecr_repo_names, [var.ecr_repo_name]) :
