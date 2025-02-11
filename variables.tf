@@ -59,6 +59,15 @@ variable "eks_cluster_namespaces" {
   default     = []
   description = "The eks cluster namespace where you will deploy to"
 }
+variable "eks_access_entry_scope" {
+  type        = string
+  default     = "namespace"
+  description = "Scope of EKS access entry. Allowed values: 'namespace' or 'cluster'."
+  validation {
+    condition     = contains(["namespace", "cluster"], var.eks_access_entry_scope)
+    error_message = "Invalid value for eks_access_entry_scope. Allowed values are 'namespace' or 'cluster'."
+  }
+}
 
 locals {
   ecr_list = ((contains(var.ecr_repo_names, var.ecr_repo_name) == false && var.ecr_repo_name != "") ?

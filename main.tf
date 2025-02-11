@@ -43,7 +43,7 @@ resource "aws_eks_access_policy_association" "this" {
   # Default give the cd role namespace admin, ref: https://docs.aws.amazon.com/eks/latest/userguide/access-policy-permissions.html
   policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
   access_scope {
-    type       = "namespace"
-    namespaces = var.eks_cluster_namespaces
+    type       = var.eks_access_entry_scope
+    namespaces = var.eks_access_entry_scope == "namespace" ? var.eks_cluster_namespaces : null
   }
 }
