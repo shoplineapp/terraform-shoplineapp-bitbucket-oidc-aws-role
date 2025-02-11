@@ -36,12 +36,15 @@ resource "aws_eks_access_entry" "this" {
   cluster_name  = var.eks_cluster_name
   principal_arn = aws_iam_role.this.arn
   type          = "STANDARD"
+  # Use helm chart to create the group by default, please find the group name convention in helm chart repo.
+  # ref: https://github.com/shoplineapp/helm-charts/blob/master/eks/templates/role_admin.yaml
+  kubernetes_groups = var.eks_access_entry_scope == "namespace" ? [for ns in var.eks_cluster_namespaces : "group-${ns}-admin"] : null
 }
 
 resource "aws_eks_access_policy_association" "this" {
   cluster_name  = var.eks_cluster_name
   principal_arn = aws_iam_role.this.arn
-  # Default give the cd role namespace admin, ref: https://docs.aws.amazon.com/eks/latest/userguide/access-policy-permissions.html
+  # Give the cd role namespace admin by default, ref: https://docs.aws.amazon.com/eks/latest/userguide/access-policy-permissions.html
   policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
   access_scope {
     type       = var.eks_access_entry_scope

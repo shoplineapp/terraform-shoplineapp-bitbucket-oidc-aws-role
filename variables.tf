@@ -65,6 +65,7 @@ variable "eks_cluster_namespaces" {
   default     = []
   description = "The eks cluster namespace where you will deploy to"
 }
+
 variable "eks_access_entry_scope" {
   type        = string
   default     = "namespace"
