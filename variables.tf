@@ -54,6 +54,12 @@ variable "eks_cluster_names" {
   description = "access to the eks cluster"
 }
 
+variable "create_eks_access_entry" {
+  type        = bool
+  default     = true
+  description = "Create the EKS access entry."
+}
+
 variable "eks_cluster_namespaces" {
   type        = list(string)
   default     = []
