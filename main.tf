@@ -36,7 +36,6 @@ resource "aws_eks_access_entry" "this" {
   count         = var.create_eks_access_entry == true ? 1 : 0
   cluster_name  = var.eks_cluster_name
   principal_arn = aws_iam_role.this.arn
-  type          = "STANDARD"
   # Use helm chart to create the group by default, please find the group name convention in helm chart repo.
   # ref: https://github.com/shoplineapp/helm-charts/blob/master/eks/templates/role_admin.yaml
   kubernetes_groups = var.eks_access_entry_scope == "namespace" ? [for ns in var.eks_cluster_namespaces : "group-${ns}-admin"] : null
