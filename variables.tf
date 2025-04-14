@@ -60,6 +60,12 @@ variable "role_permissions_boundary_arn" {
   description = "The policy ARN that is used to set the permissions boundary for the role"
 }
 
+variable "eks_cluster_namespaces" {
+  type        = list(string)
+  default     = []
+  description = "The eks cluster namespace where you will deploy to"
+}
+
 locals {
   ecr_list = ((contains(var.ecr_repo_names, var.ecr_repo_name) == false && var.ecr_repo_name != "") ?
     concat(var.ecr_repo_names, [var.ecr_repo_name]) :

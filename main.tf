@@ -31,3 +31,20 @@ resource "aws_iam_role_policy_attachment" "this" {
   role       = aws_iam_role.this.name
   policy_arn = var.policy_arns[count.index]
 }
+
+resource "aws_eks_access_entry" "this" {
+  cluster_name  = var.eks_cluster_name
+  principal_arn = aws_iam_role.this.arn
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "this" {
+  cluster_name  = var.eks_cluster_name
+  principal_arn = aws_iam_role.this.arn
+  # Default give the cd role namespace admin, ref: https://docs.aws.amazon.com/eks/latest/userguide/access-policy-permissions.html
+  policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+  access_scope {
+    type       = "namespace"
+    namespaces = var.eks_cluster_namespaces
+  }
+}
