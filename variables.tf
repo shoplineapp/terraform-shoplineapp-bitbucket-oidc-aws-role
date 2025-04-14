@@ -82,6 +82,34 @@ variable "eks_access_entry_scope" {
   }
 }
 
+variable "role_permissions_boundary_arn" {
+  type        = string
+  default     = null
+  description = "The policy ARN that is used to set the permissions boundary for the role"
+}
+
+variable "create_eks_access_entry" {
+  type        = bool
+  default     = true
+  description = "Create the EKS access entry."
+}
+
+variable "eks_cluster_namespaces" {
+  type        = list(string)
+  default     = []
+  description = "The eks cluster namespace where you will deploy to"
+}
+
+variable "eks_access_entry_scope" {
+  type        = string
+  default     = "namespace"
+  description = "Scope of EKS access entry. Allowed values: 'namespace' or 'cluster'."
+  validation {
+    condition     = contains(["namespace", "cluster"], var.eks_access_entry_scope)
+    error_message = "Invalid value for eks_access_entry_scope. Allowed values are 'namespace' or 'cluster'."
+  }
+}
+
 locals {
   ecr_list = ((contains(var.ecr_repo_names, var.ecr_repo_name) == false && var.ecr_repo_name != "") ?
     concat(var.ecr_repo_names, [var.ecr_repo_name]) :
