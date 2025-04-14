@@ -53,3 +53,13 @@ resource "aws_eks_access_policy_association" "this" {
     namespaces = var.eks_access_entry_scope == "namespace" ? var.eks_cluster_namespaces : null
   }
 }
+
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.33.0"
+      # aws_eks_access_policy_association required version > 5.33.0
+    }
+  }
+}
