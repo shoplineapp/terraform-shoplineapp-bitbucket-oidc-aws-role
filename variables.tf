@@ -60,6 +60,12 @@ variable "role_permissions_boundary_arn" {
   description = "The policy ARN that is used to set the permissions boundary for the role"
 }
 
+variable "create_eks_access_entry" {
+  type        = bool
+  default     = true
+  description = "Create the EKS access entry."
+}
+
 variable "eks_cluster_namespaces" {
   type        = list(string)
   default     = []

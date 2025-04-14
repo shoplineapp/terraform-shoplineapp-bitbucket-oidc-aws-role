@@ -33,6 +33,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 }
 
 resource "aws_eks_access_entry" "this" {
+  count         = var.create_eks_access_entry == true ? 1 : 0
   cluster_name  = var.eks_cluster_name
   principal_arn = aws_iam_role.this.arn
   type          = "STANDARD"
@@ -42,6 +43,7 @@ resource "aws_eks_access_entry" "this" {
 }
 
 resource "aws_eks_access_policy_association" "this" {
+  count         = var.create_eks_access_entry == true ? 1 : 0
   cluster_name  = var.eks_cluster_name
   principal_arn = aws_iam_role.this.arn
   # Give the cd role namespace admin by default, ref: https://docs.aws.amazon.com/eks/latest/userguide/access-policy-permissions.html
