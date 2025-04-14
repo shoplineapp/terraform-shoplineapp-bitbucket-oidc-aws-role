@@ -57,7 +57,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.33.0"
+      version = ">= 5.33.0"
       # aws_eks_access_policy_association required version > 5.33.0
     }
   }
