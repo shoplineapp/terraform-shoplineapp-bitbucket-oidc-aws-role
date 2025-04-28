@@ -51,6 +51,12 @@ resource "aws_eks_access_policy_association" "this" {
     type       = var.eks_access_entry_scope
     namespaces = var.eks_access_entry_scope == "namespace" ? var.eks_cluster_namespaces : null
   }
+  # Add depends_on to avoid, the following error
+  # Error: creating EKS Access Policy Association (CLUSTER_NAME#arn:aws:iam::123456789012:role/CD_ROLE_NAME#arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy): operation error EKS: AssociateAccessPolicy, https response error StatusCode: 404, RequestID: abcd1234-ab12-cd56-efg7-087d532fbcf4, ResourceNotFoundException: The specified principalArn could not be found. You can view your available access entries with 'list-access-entries'.
+  # See: https://github.com/hashicorp/terraform-provider-aws/issues/40951
+  depends_on = [
+    aws_eks_access_entry.this
+  ]
 }
 
 terraform {
