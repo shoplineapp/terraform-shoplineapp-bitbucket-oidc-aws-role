@@ -32,6 +32,12 @@ resource "aws_iam_role_policy_attachment" "this" {
   policy_arn = var.policy_arns[count.index]
 }
 
+resource "time_sleep" "aws_iam_role_propagation" {
+  # To avoid issues with IAM role creation before propagation is complete
+  create_duration = "10s"
+  depends_on      = [aws_iam_role.this]
+}
+
 resource "aws_eks_access_entry" "this" {
   count         = var.create_eks_access_entry == true ? 1 : 0
   cluster_name  = var.eks_cluster_name
@@ -39,6 +45,7 @@ resource "aws_eks_access_entry" "this" {
   # Use helm chart to create the group by default, please find the group name convention in helm chart repo.
   # ref: https://github.com/shoplineapp/helm-charts/blob/master/eks/templates/role_admin.yaml
   kubernetes_groups = var.eks_access_entry_scope == "namespace" ? [for ns in var.eks_cluster_namespaces : "group-${ns}-admin"] : null
+  depends_on        = [time_sleep.aws_iam_role_propagation]
 }
 
 resource "aws_eks_access_policy_association" "this" {
