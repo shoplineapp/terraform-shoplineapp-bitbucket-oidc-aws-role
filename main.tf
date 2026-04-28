@@ -44,7 +44,7 @@ resource "aws_eks_access_entry" "this" {
   principal_arn = aws_iam_role.this.arn
   # Use helm chart to create the group by default, please find the group name convention in helm chart repo.
   # ref: https://github.com/shoplineapp/helm-charts/blob/master/eks/templates/role_admin.yaml
-  kubernetes_groups = var.eks_access_entry_scope == "namespace" ? [for ns in var.eks_cluster_namespaces : "group-${ns}-admin"] : null
+  kubernetes_groups = length(local.eks_access_entry_kubernetes_groups) > 0 ? local.eks_access_entry_kubernetes_groups : null
   depends_on        = [time_sleep.aws_iam_role_propagation]
 }
 
