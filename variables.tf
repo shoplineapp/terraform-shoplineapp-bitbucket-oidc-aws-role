@@ -72,6 +72,12 @@ variable "eks_cluster_namespaces" {
   description = "The eks cluster namespace where you will deploy to"
 }
 
+variable "eks_access_entry_kubernetes_groups" {
+  type        = list(string)
+  default     = []
+  description = "Additional Kubernetes groups to associate with the EKS access entry."
+}
+
 variable "eks_access_entry_scope" {
   type        = string
   default     = "namespace"
@@ -91,4 +97,6 @@ locals {
     concat(var.eks_cluster_names, [var.eks_cluster_name]) :
     var.eks_cluster_names
   )
+  default_eks_access_entry_kubernetes_groups = var.eks_access_entry_scope == "namespace" ? [for ns in var.eks_cluster_namespaces : "group-${ns}-admin"] : []
+  eks_access_entry_kubernetes_groups         = distinct(concat(local.default_eks_access_entry_kubernetes_groups, var.eks_access_entry_kubernetes_groups))
 }
